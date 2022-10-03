@@ -129,7 +129,6 @@ static void task_oled(void *pvParameters) {
 	for (;;)  {
     if (xQueueReceive(xQueueModo, &(angulo_lido), 0)){
 	    passos = angulo_lido/angulo_por_passo;
-			printf("Passos: %d \n", passos);
 			xQueueSend(xQueueSteps, &passos, &xHigherPriorityTaskWoken);
 	    gfx_mono_draw_filled_rect(10, 10, 124, 10, GFX_PIXEL_CLR);
 			sprintf(str_oled, "Angulo = %d graus", angulo_lido);
@@ -139,59 +138,39 @@ static void task_oled(void *pvParameters) {
 }
 
 static void task_motor(void *pvParameters){
-	printf("Chegou na task motor \n");
 	uint32_t n_passos = 0;
 	for (;;)	{
 		if (xQueueReceive(xQueueSteps, &n_passos, 0)){
-			printf("Passos Recebidos: %d \n", n_passos);
-			RTT_init(1000, 5, RTT_MR_ALMIEN);
 			for (int i = 0; i < (n_passos/4); i++) {
-				if (xSemaphoreTake(xSemaphoreRTT, 0)){
+				RTT_init(1000, 5, RTT_MR_ALMIEN);
+				if (xSemaphoreTake(xSemaphoreRTT, 1000) == pdTRUE){
 					pio_set(IN1_PIO, IN1_PIO_IDX_MASK);
 					pio_clear(IN2_PIO, IN2_PIO_IDX_MASK);
 					pio_clear(IN3_PIO, IN3_PIO_IDX_MASK);
 					pio_clear(IN4_PIO, IN4_PIO_IDX_MASK);
 				}
-				if (xSemaphoreTake(xSemaphoreRTT, 0)){
+				RTT_init(1000, 5, RTT_MR_ALMIEN);
+				if (xSemaphoreTake(xSemaphoreRTT, 1000) == pdTRUE){
 					pio_clear(IN1_PIO, IN1_PIO_IDX_MASK);
 					pio_set(IN2_PIO, IN2_PIO_IDX_MASK);
 					pio_clear(IN3_PIO, IN3_PIO_IDX_MASK);
 					pio_clear(IN4_PIO, IN4_PIO_IDX_MASK);
 				}
-				if (xSemaphoreTake(xSemaphoreRTT, 0)){
+				RTT_init(1000, 5, RTT_MR_ALMIEN);
+				if (xSemaphoreTake(xSemaphoreRTT, 1000) == pdTRUE){
 					pio_clear(IN1_PIO, IN1_PIO_IDX_MASK);
 					pio_clear(IN2_PIO, IN2_PIO_IDX_MASK);
 					pio_set(IN3_PIO, IN3_PIO_IDX_MASK);
 					pio_clear(IN4_PIO, IN4_PIO_IDX_MASK);
 				}
-				if (xSemaphoreTake(xSemaphoreRTT, 0)){
+				RTT_init(1000, 5, RTT_MR_ALMIEN);
+				if (xSemaphoreTake(xSemaphoreRTT, 1000) == pdTRUE){
 					pio_clear(IN1_PIO, IN1_PIO_IDX_MASK);
 					pio_clear(IN2_PIO, IN2_PIO_IDX_MASK);
 					pio_clear(IN3_PIO, IN3_PIO_IDX_MASK);
 					pio_set(IN4_PIO, IN4_PIO_IDX_MASK);
-				}
-				//pio_set(IN1_PIO, IN1_PIO_IDX_MASK);
-				//pio_clear(IN2_PIO, IN2_PIO_IDX_MASK);
-				//pio_clear(IN3_PIO, IN3_PIO_IDX_MASK);
-				//pio_clear(IN4_PIO, IN4_PIO_IDX_MASK);
-				//delay_ms(5);
-				//pio_clear(IN1_PIO, IN1_PIO_IDX_MASK);
-				//pio_set(IN2_PIO, IN2_PIO_IDX_MASK);
-				//pio_clear(IN3_PIO, IN3_PIO_IDX_MASK);
-				//pio_clear(IN4_PIO, IN4_PIO_IDX_MASK);
-				//delay_ms(5);
-				//pio_clear(IN1_PIO, IN1_PIO_IDX_MASK);
-				//pio_clear(IN2_PIO, IN2_PIO_IDX_MASK);
-				//pio_set(IN3_PIO, IN3_PIO_IDX_MASK);
-				//pio_clear(IN4_PIO, IN4_PIO_IDX_MASK);
-				//delay_ms(5);
-				//pio_clear(IN1_PIO, IN1_PIO_IDX_MASK);
-				//pio_clear(IN2_PIO, IN2_PIO_IDX_MASK);
-				//pio_clear(IN3_PIO, IN3_PIO_IDX_MASK);
-				//pio_set(IN4_PIO, IN4_PIO_IDX_MASK);
-				//delay_ms(5);
+				}	
 			}
-			
 		}
 	}
 }
